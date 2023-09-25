@@ -5,7 +5,7 @@ from typing import List
 from statistics import mean, median, stdev
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-from chainforge.providers.dalai import call_dalai
+from chainforge.providers.dalai import call_dalai, call_remote_llm
 from chainforge.providers import ProviderRegistry
 import requests as py_requests
 
@@ -500,7 +500,8 @@ async def callDalai():
         return jsonify({'error': 'POST data is improper format.'})
 
     try:
-        query, response = await call_dalai(**data)
+        # query, response = await call_dalai(**data)
+        query, response = call_remote_llm(**data)
     except Exception as e:
         return jsonify({'error': str(e)})
 
@@ -698,5 +699,7 @@ def run_server(host="", port=8000, cmd_args=None):
     PORT = port    
     app.run(host=host, port=port)
 
+
 if __name__ == '__main__':
+    run_server(host="localhost", port=8000)
     print("Run app.py instead.")

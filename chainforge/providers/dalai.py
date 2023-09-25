@@ -1,5 +1,6 @@
 from typing import Tuple, Dict
 import asyncio, time
+import requests
 
 DALAI_MODEL = None
 DALAI_RESPONSE = None
@@ -87,3 +88,28 @@ async def call_dalai(prompt: str, model: str, server: str="http://localhost:4000
     DALAI_MODEL.disconnect()
 
     return query, responses
+
+
+def call_remote_llm(
+        prompt,
+        model: str = "TheBloke/Xwin-LM-13B-V0.1-GPTQ",
+        server: str = "http://16.162.47.254:8000/api/chat",
+        temperature: float = 0.7,
+        **params
+):
+    if model != "TheBloke/Xwin-LM-13B-V0.1-GPTQ":
+        # raise ValueError("TheBloke/Xwin-LM-13B-V0.1-GPTQ model supported")
+        model = "TheBloke/Xwin-LM-13B-V0.1-GPTQ"
+    data = {
+        "prompt": prompt,
+        "model_name": model,
+        "temperature": temperature
+    }
+    print("call remote llm")
+    response = requests.post(url=server, data=data)
+    print(f"response: {response.text}")
+    return prompt, response.text
+
+
+if __name__ == '__main__':
+    call_remote_llm("Hellow")
